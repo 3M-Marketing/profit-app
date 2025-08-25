@@ -21,7 +21,7 @@ st.sidebar.header(" إدخال البيانات")
 orders = st.sidebar.number_input("عدد الأوردرات الشهرية", min_value=1, value=100, step=1)
 unit_cost = st.sidebar.number_input(" تكلفة التصنيع للوحدة (جنيه)", min_value=0, value=1220, step=10)
 packaging_cost = st.sidebar.number_input(" تكلفة التغليف للوحدة (جنيه)", min_value=0, value=100, step=10)
-marketing_cost_per_order = st.sidebar.number_input("📢 تكلفة الحصول على عميل (جنيه)", min_value=0, value=150, step=10)
+marketing_cost_per_order = st.sidebar.number_input(" تكلفة الحصول على عميل (جنيه)", min_value=0, value=150, step=10)
 selling_price = st.sidebar.number_input(" سعر البيع للوحدة", min_value=0, value=3000, step=100)
 
 delivery_rates = [0.25, 0.50, 0.75, 1.0]
@@ -51,3 +51,4 @@ st.table(df)
 st.markdown("---")
 st.image("signature.png", width=200)  # لازم تحفظ الإمضاء كـ signature.png جنب app.py
 st.markdown("<p style='text-align: center; color: gray;'>Made by Mohamed.A Marketing</p>", unsafe_allow_html=True)
+
