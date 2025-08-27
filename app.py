@@ -1,4 +1,5 @@
 import streamlit as st
+from PIL import Image
 
 # ========================
 # إعدادات الصفحة
@@ -10,32 +11,35 @@ st.set_page_config(
 )
 
 # ========================
-# أيقونات التواصل فوق اللوجو + نص مساعد
+# نص مساعد فوق اللوجو
 # ========================
 st.markdown(
-    """
-    <div style='text-align:center; display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:10px;'>
-        <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
-        </a>
-        <a href='https://wa.me/201001753411' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
-        </a>
-        <span style='font-size:16px; color:#333; font-weight:bold;'>ابعتلي هنا لو محتاج مساعدة</span>
-    </div>
-    """,
+    "<div style='text-align:center; font-size:16px; font-weight:bold; color:#333; margin-bottom:10px;'>ابعتلي هنا لو محتاج مساعدة</div>",
     unsafe_allow_html=True
 )
 
 # ========================
-# عرض اللوجو في النص مع خلفية متباينة
+# فتح الصور باستخدام PIL
+# ========================
+try:
+    logo = Image.open("logo.png")
+    signature = Image.open("signature.png")
+except Exception as e:
+    st.error(f"مش قادر يفتح الصور: {e}")
+
+# ========================
+# اللوجو مع خلفية دائرية 3D
 # ========================
 st.markdown(
-    "<div style='text-align:center; background-color:white; display:inline-block; padding:10px; border-radius:15px;'>",
+    """
+    <div style='display:flex; justify-content:center;'>
+        <div style='background-color:white; border-radius:30px; padding:20px; max-width:300px; 
+                    box-shadow: 0 8px 16px rgba(0,0,0,0.2); text-align:center;'>
+    """,
     unsafe_allow_html=True
 )
-st.image("logo.png", width=200)
-st.markdown("</div>", unsafe_allow_html=True)
+st.image(logo, width=200)
+st.markdown("</div></div>", unsafe_allow_html=True)
 
 st.markdown("<h3 style='text-align:center; color:#003366;'>Profit Calculator</h3>", unsafe_allow_html=True)
 
@@ -129,12 +133,27 @@ if st.button("ابعت رسالتك دلوقتي"):
         st.warning("من فضلك اكتب رسالتك الأول قبل ما تبعتها.")
 
 # ========================
-# الفوتر (أيقونات قريبة من بعض)
+# توقيع مع خلفية دائرية 3D + نص Made By
+# ========================
+st.markdown(
+    """
+    <div style='display:flex; justify-content:center; margin-top:20px;'>
+        <div style='background-color:white; border-radius:30px; padding:15px; max-width:250px; 
+                    box-shadow: 0 8px 16px rgba(0,0,0,0.2); text-align:center;'>
+    """,
+    unsafe_allow_html=True
+)
+st.image(signature, width=180)
+st.markdown("<p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>Made By <b>Mohamed.A Marketing</b></p>", unsafe_allow_html=True)
+st.markdown("</div></div>", unsafe_allow_html=True)
+
+# ========================
+# الفوتر (أيقونات فيسبوك وواتساب مرة واحدة فقط)
 # ========================
 st.markdown("---")
 st.markdown(
     """
-    <div style='text-align:center; display:flex; justify-content:center; gap:10px;'>
+    <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
         <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
             <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
         </a>
@@ -145,11 +164,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# ========================
-# توقيع في منتصف الصفحة + Made By مع خلفية متباينة
-# ========================
-st.markdown("<div style='text-align:center; margin-top:20px; background-color:white; display:inline-block; padding:10px; border-radius:10px;'>", unsafe_allow_html=True)
-st.image("signature.png", width=180)
-st.markdown("<p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>Made By <b>Mohamed.A Marketing</b></p>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
