@@ -11,20 +11,11 @@ st.set_page_config(
 )
 
 # ========================
-# اختيار Light Mode (لو المستخدم في Dark Mode)
+# اختيار خلفية التطبيق
 # ========================
-light_mode = st.checkbox("تفعيل Light Mode")
+bg_choice = st.radio("اختر خلفية التطبيق", ["أبيض", "أسود"])
+bg_color = "#FFFFFF" if bg_choice == "أبيض" else "#000000"
 
-if light_mode:
-    bg_color = "#FFFFFF"
-    logo = Image.open("logo_dark.png")        # نسخة سوداء
-    signature = Image.open("signature_dark.png")
-else:
-    bg_color = "#000000"
-    logo = Image.open("logo_light.png")       # نسخة بيضاء
-    signature = Image.open("signature_light.png")
-
-# تغيير خلفية الصفحة
 st.markdown(
     f"""
     <style>
@@ -45,8 +36,15 @@ st.markdown(
 )
 
 # ========================
-# اللوجو مع خلفية دائرية 3D
+# فتح وعرض الصور الأصلية
 # ========================
+try:
+    logo = Image.open("logo.png")
+    signature = Image.open("signature.png")
+except Exception as e:
+    st.error(f"مش قادر يفتح الصور: {e}")
+
+# اللوجو مع خلفية دائرية 3D
 st.markdown(
     """
     <div style='display:flex; justify-content:center;'>
