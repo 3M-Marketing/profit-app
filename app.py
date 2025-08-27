@@ -11,21 +11,38 @@ st.set_page_config(
 )
 
 # ========================
+# اختيار Light Mode (لو المستخدم في Dark Mode)
+# ========================
+light_mode = st.checkbox("تفعيل Light Mode")
+
+if light_mode:
+    bg_color = "#FFFFFF"
+    logo = Image.open("logo_dark.png")        # نسخة سوداء
+    signature = Image.open("signature_dark.png")
+else:
+    bg_color = "#000000"
+    logo = Image.open("logo_light.png")       # نسخة بيضاء
+    signature = Image.open("signature_light.png")
+
+# تغيير خلفية الصفحة
+st.markdown(
+    f"""
+    <style>
+    .reportview-container {{
+        background-color: {bg_color};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# ========================
 # نص مساعد فوق اللوجو
 # ========================
 st.markdown(
     "<div style='text-align:center; font-size:16px; font-weight:bold; color:#333; margin-bottom:10px;'>ابعتلي هنا لو محتاج مساعدة</div>",
     unsafe_allow_html=True
 )
-
-# ========================
-# فتح الصور باستخدام PIL
-# ========================
-try:
-    logo = Image.open("logo.png")
-    signature = Image.open("signature.png")
-except Exception as e:
-    st.error(f"مش قادر يفتح الصور: {e}")
 
 # ========================
 # اللوجو مع خلفية دائرية 3D
