@@ -10,16 +10,32 @@ st.set_page_config(
 )
 
 # ========================
-# عرض اللوجو في النص مع خلفية متباينة
+# أيقونات التواصل فوق اللوجو + نص مساعد
 # ========================
 st.markdown(
     """
-    <div style='text-align:center; background-color:white; display:inline-block; padding:10px; border-radius:15px;'>
-        <img src='logo.png' width='200'>
+    <div style='text-align:center; display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:10px;'>
+        <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
+            <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
+        </a>
+        <a href='https://wa.me/201001753411' target='_blank'>
+            <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
+        </a>
+        <span style='font-size:16px; color:#333; font-weight:bold;'>ابعتلي هنا لو محتاج مساعدة</span>
     </div>
     """,
     unsafe_allow_html=True
 )
+
+# ========================
+# عرض اللوجو في النص مع خلفية متباينة
+# ========================
+st.markdown(
+    "<div style='text-align:center; background-color:white; display:inline-block; padding:10px; border-radius:15px;'>",
+    unsafe_allow_html=True
+)
+st.image("logo.png", width=200)
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h3 style='text-align:center; color:#003366;'>Profit Calculator</h3>", unsafe_allow_html=True)
 
@@ -64,31 +80,17 @@ with col4:
 # الحسابات
 # ========================
 if st.button("احسب النتيجة"):
-    # الإيرادات
     gross_revenue = selling_price * units_sold
-
-    # التكاليف المرتبطة بالوحدات
     total_manufacturing = manufacturing_cost * units_sold
     total_packaging = packaging_cost * units_sold
     total_shipping = shipping_cost * units_sold if shipping_cost > 0 else 0
-
-    # التكاليف الثابتة
     ads_total = ads_sales + ads_awareness
     total_fixed = ads_total + photography_cost + marketing_team
-
-    # المرتجعات
     units_returned = (return_rate / 100) * units_sold
     returns_cost = units_returned * return_cost_per_unit if return_cost_per_unit > 0 else 0
-
-    # إجمالي التكاليف
     total_costs = total_manufacturing + total_packaging + total_shipping + total_fixed + returns_cost
-
-    # صافي الربح
     net_profit = gross_revenue - total_costs
 
-    # ========================
-    # عرض النتائج
-    # ========================
     st.markdown("---")
     st.subheader("نتائج الحساب:")
 
@@ -108,20 +110,11 @@ if st.button("احسب النتيجة"):
 # ========================
 st.markdown("---")
 st.subheader("لو محتاج استشارة من المتخصص")
-
 st.markdown(
-    "<p style='color:#444; text-align:center;'>"
-    "ابعتلي دلوقتي مشكلتك أو استفسارك، وأنا هكون معاك على واتساب علشان نلاقي الحل سوا"
-    "</p>",
+    "<p style='color:#444; text-align:center;'>ابعتلي دلوقتي مشكلتك أو استفسارك، وأنا هكون معاك على واتساب علشان نلاقي الحل سوا</p>",
     unsafe_allow_html=True
 )
-
-user_msg = st.text_area(
-    "✉️ اكتب رسالتك هنا:",
-    placeholder="مثلاً: عندي مشروع بس مش عارف أبدأ تسويقه...",
-    height=120
-)
-
+user_msg = st.text_area("✉️ اكتب رسالتك هنا:", placeholder="مثلاً: عندي مشروع بس مش عارف أبدأ تسويقه...", height=120)
 if st.button("ابعت رسالتك دلوقتي"):
     if user_msg.strip():
         whatsapp_url = f"https://wa.me/201001753411?text={user_msg.replace(' ', '%20')}"
@@ -129,9 +122,7 @@ if st.button("ابعت رسالتك دلوقتي"):
         st.markdown(
             f"<a href='{whatsapp_url}' target='_blank' "
             "style='display:inline-block; background:#25D366; color:white; padding:10px 20px; "
-            "border-radius:8px; text-decoration:none; font-weight:bold;'>"
-            "افتح واتساب وأرسل الرسالة"
-            "</a>",
+            "border-radius:8px; text-decoration:none; font-weight:bold;'>افتح واتساب وأرسل الرسالة</a>",
             unsafe_allow_html=True
         )
     else:
@@ -158,14 +149,7 @@ st.markdown(
 # ========================
 # توقيع في منتصف الصفحة + Made By مع خلفية متباينة
 # ========================
-st.markdown(
-    """
-    <div style='text-align:center; margin-top:20px; background-color:white; display:inline-block; padding:10px; border-radius:10px;'>
-        <img src='signature.png' width='180'>
-        <p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>
-            Made By <b>Mohamed.A Marketing</b>
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("<div style='text-align:center; margin-top:20px; background-color:white; display:inline-block; padding:10px; border-radius:10px;'>", unsafe_allow_html=True)
+st.image("signature.png", width=180)
+st.markdown("<p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>Made By <b>Mohamed.A Marketing</b></p>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
