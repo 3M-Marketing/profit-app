@@ -10,11 +10,16 @@ st.set_page_config(
 )
 
 # ========================
-# عرض اللوجو في النص
+# عرض اللوجو في النص مع خلفية متباينة
 # ========================
-st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-st.image("logo.png", width=200)
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='text-align:center; background-color:white; display:inline-block; padding:10px; border-radius:15px;'>
+        <img src='logo.png' width='200'>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.markdown("<h3 style='text-align:center; color:#003366;'>Profit Calculator</h3>", unsafe_allow_html=True)
 
@@ -111,7 +116,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# صندوق الرسالة
 user_msg = st.text_area(
     "✉️ اكتب رسالتك هنا:",
     placeholder="مثلاً: عندي مشروع بس مش عارف أبدأ تسويقه...",
@@ -152,14 +156,16 @@ st.markdown(
 )
 
 # ========================
-# توقيع في منتصف الصفحة + Made By
+# توقيع في منتصف الصفحة + Made By مع خلفية متباينة
 # ========================
-st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
-st.image("signature.png", width=180)
 st.markdown(
-    "<p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>"
-    "Made By <b>Mohamed.A Marketing</b>"
-    "</p>",
+    """
+    <div style='text-align:center; margin-top:20px; background-color:white; display:inline-block; padding:10px; border-radius:10px;'>
+        <img src='signature.png' width='180'>
+        <p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>
+            Made By <b>Mohamed.A Marketing</b>
+        </p>
+    </div>
+    """,
     unsafe_allow_html=True
 )
-st.markdown("</div>", unsafe_allow_html=True)
