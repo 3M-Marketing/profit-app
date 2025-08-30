@@ -253,3 +253,14 @@ st.markdown(
     <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
         <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
             <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png
+
+            ' width='30'/>
+        </a>
+        <a href='https://wa.me/201001753411' target='_blank'>
+            <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
+        </a>
+    </div>
+    <p style='text-align:center; color:#555; font-size:14px;'>{texts["developed"]}</p>
+    """,
+    unsafe_allow_html=True
+)
