@@ -3,6 +3,7 @@ from PIL import Image
 from fpdf import FPDF
 import arabic_reshaper
 from bidi.algorithm import get_display
+import os
 
 # ========================
 # إعدادات الصفحة
@@ -14,12 +15,24 @@ st.set_page_config(
 )
 
 # ========================
+# تحميل الصور
+# ========================
+try:
+    logo = Image.open("logo.png")
+    signature = Image.open("signature.png")
+except Exception as e:
+    st.error(f"Error loading images: {e}")
+
+# عرض اللوغو أعلى الصفحة
+st.image(logo, width=200)
+
+# ========================
 # اختيار اللغة
 # ========================
 lang = st.selectbox(
     "Select Language / اختر اللغة",
     ["English", "العربية"],
-    index=0  # English is default
+    index=0  # English default
 )
 
 # ========================
@@ -157,7 +170,6 @@ if st.button(texts["calculate"]):
     returns_cost = units_returned * return_cost_per_unit
     total_costs = total_manufacturing + total_packaging + total_shipping + total_fixed + returns_cost
     net_profit = gross_revenue - total_costs
-    # Customer Acquisition Cost based on delivered units
     delivered_units = (delivery_rate / 100) * units_sold
     cac = total_costs / delivered_units if delivered_units > 0 else 0
 
@@ -189,9 +201,15 @@ if st.button(texts["calculate"]):
     # ========================
     pdf = FPDF()
     pdf.add_page()
-    # استخدام خط عربي/إنجليزي إذا لزم
-    pdf.add_font("ArialUnicode", "", "Amiri-Regular.ttf", uni=True)
+
+    # إضافة اللوغو في PDF
+    if os.path.exists("logo.png"):
+        pdf.image("logo.png", x=80, y=8, w=50)
+
+    # استخدام خط Unicode
+    pdf.add_font("ArialUnicode", "", "fonts/Amiri-Regular.ttf", uni=True)
     pdf.set_font("ArialUnicode", size=14)
+    pdf.ln(35)  # مسافة بعد اللوغو
     pdf.cell(0, 10, f"Client Name: {client_name}", ln=True)
     pdf.ln(5)
     pdf.cell(0, 10, f"Brand Status: {brand_status}", ln=True)
@@ -203,13 +221,19 @@ if st.button(texts["calculate"]):
     pdf.cell(0, 10, f"{texts['units_returned']}: {units_returned:,.2f}", ln=True)
     pdf.cell(0, 10, f"{texts['returns_cost']}: {returns_cost:,.2f}", ln=True)
     pdf.cell(0, 10, f"{texts['cac']}: {cac:,.2f}", ln=True)
+
+    # إضافة التوقيع في PDF
+    if os.path.exists("signature.png"):
+        pdf.image("signature.png", x=80, y=pdf.get_y() + 10, w=50)
+        pdf.ln(25)
+
     pdf.output("profit_report.pdf")
 
     with open("profit_report.pdf", "rb") as f:
         st.download_button("📥 Download PDF", f, file_name="profit_report.pdf")
 
 # ========================
-# قسم الاستشارة
+# قسم الاستشارة والتواصل
 # ========================
 st.markdown("---")
 st.subheader(texts["consult"])
@@ -233,7 +257,7 @@ if st.button(texts["send_message"]):
 # ========================
 st.markdown("---")
 st.markdown(
-    """
+    f"""
     <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
         <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
             <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
@@ -242,7 +266,4 @@ st.markdown(
             <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
         </a>
     </div>
-    <p style='text-align:center; color:#555; font-size:14px;'>{texts["developed"]}</p>
-    """,
-    unsafe_allow_html=True
-)
+    <p style='text-align:center; color:#555; font-size:14px;'>{texts["
