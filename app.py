@@ -245,12 +245,12 @@ if st.button(texts["send_message"]):
         st.warning("Please enter a message first!")
 
 # ========================
-# الفوتر (أيقونات التواصل + Developed By)
+# الفوتر (أيقونات التواصل + Developed By مع رابط)
 # ========================
 st.markdown("---")
 st.markdown(
     f"""
-    <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
+    <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:10px;'>
         <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
             <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
         </a>
@@ -258,7 +258,11 @@ st.markdown(
             <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
         </a>
     </div>
-    <p style='text-align:center; color:#555; font-size:14px;'>{texts["developed"]}</p>
+    <p style='text-align:center; color:#555; font-size:14px;'>
+        <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank' style='color:#555; text-decoration:underline;'>
+            Developed by Mohamed.A Marketing
+        </a>
+    </p>
     """,
     unsafe_allow_html=True
 )
