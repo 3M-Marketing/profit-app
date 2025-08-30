@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image
+from fpdf import FPDF
 
 # ========================
 # إعدادات الصفحة
@@ -11,171 +11,199 @@ st.set_page_config(
 )
 
 # ========================
-# اختيار خلفية التطبيق
+# اختيار اللغة (English default)
 # ========================
-bg_choice = st.radio("اختر خلفية التطبيق", ["أبيض", "أسود"])
-bg_color = "#FFFFFF" if bg_choice == "أبيض" else "#000000"
-
-st.markdown(
-    f"""
-    <style>
-    .reportview-container {{
-        background-color: {bg_color};
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+language = st.selectbox("Select Language / اختر اللغة:", ["English", "العربية"])
+is_en = language == "English"
 
 # ========================
-# نص مساعد فوق اللوجو
+# ترجمات النصوص
 # ========================
-st.markdown(
-    "<div style='text-align:center; font-size:16px; font-weight:bold; color:#333; margin-bottom:10px;'>ابعتلي هنا لو محتاج مساعدة</div>",
-    unsafe_allow_html=True
-)
+texts = {
+    "English": {
+        "client_name": "Client Name",
+        "brand_status": "Select Brand Status",
+        "existing": "Existing Brand",
+        "new": "New Project / Forecast",
+        "enter_details": "Enter your project details to calculate profit and loss:",
+        "selling_price": "Selling Price",
+        "units_sold": "Units Sold",
+        "manufacturing_cost": "Manufacturing Cost (per unit)",
+        "packaging_cost": "Packaging Cost (per unit)",
+        "ads_sales": "Ads Cost (Sales)",
+        "ads_awareness": "Ads Cost (Awareness)",
+        "photography_cost": "Photography Cost",
+        "marketing_team": "Marketing Team Cost",
+        "shipping_cost": "Shipping Cost (per unit, optional)",
+        "return_cost_per_unit": "Return Cost per Unit (optional)",
+        "delivery_rate": "Successful Delivery Rate (%)",
+        "compute": "Compute",
+        "results": "Calculation Results:",
+        "gross_revenue": "Gross Revenue",
+        "total_costs": "Total Costs",
+        "net_profit": "Net Profit",
+        "units_returned": "Units Returned",
+        "returns_cost": "Returns Cost",
+        "cac": "Customer Acquisition Cost",
+        "evaluation": "Project Evaluation",
+        "consult": "Consult a Specialist",
+        "consult_desc": "Send your issue or inquiry and I'll help you via WhatsApp.",
+        "send_msg": "Send Your Message Now"
+    },
+    "العربية": {
+        "client_name": "اسم العميل",
+        "brand_status": "اختر نوع المشروع",
+        "existing": "براند شغال",
+        "new": "مشروع جديد / تقديري",
+        "enter_details": "أدخل تفاصيل مشروعك لحساب الربح والخسارة:",
+        "selling_price": "سعر البيع للمنتج الواحد",
+        "units_sold": "عدد الوحدات المباعة",
+        "manufacturing_cost": "تكلفة التصنيع (للوحدة)",
+        "packaging_cost": "تكلفة التغليف (للوحدة)",
+        "ads_sales": "تكلفة الإعلانات (مبيعات)",
+        "ads_awareness": "تكلفة الإعلانات (وعي)",
+        "photography_cost": "تكلفة التصوير",
+        "marketing_team": "تكلفة فريق التسويق",
+        "shipping_cost": "تكلفة الشحن (للوحدة، اختياري)",
+        "return_cost_per_unit": "تكلفة المرتجعات لكل وحدة (اختياري)",
+        "delivery_rate": "نسبة التسليمات الناجحة (%)",
+        "compute": "احسب النتيجة",
+        "results": "نتائج الحساب:",
+        "gross_revenue": "إجمالي الإيرادات",
+        "total_costs": "إجمالي التكاليف",
+        "net_profit": "صافي الربح",
+        "units_returned": "عدد الوحدات المرتجعة",
+        "returns_cost": "تكلفة المرتجعات",
+        "cac": "تكلفة الحصول على العميل",
+        "evaluation": "تقييم المشروع",
+        "consult": "لو محتاج استشارة من المتخصص",
+        "consult_desc": "ابعتلي دلوقتي مشكلتك أو استفسارك، وأنا هكون معاك على واتساب",
+        "send_msg": "ابعت رسالتك دلوقتي"
+    }
+}
+
+t = texts["English"] if is_en else texts["العربية"]
 
 # ========================
-# فتح وعرض الصور الأصلية
+# إدخال اسم العميل
 # ========================
-try:
-    logo = Image.open("logo.png")
-    signature = Image.open("signature.png")
-except Exception as e:
-    st.error(f"مش قادر يفتح الصور: {e}")
+client_name = st.text_input(f"{t['client_name']}:")
 
-# اللوجو مع خلفية دائرية 3D
-st.markdown(
-    """
-    <div style='display:flex; justify-content:center;'>
-        <div style='background-color:white; border-radius:30px; padding:20px; max-width:300px; 
-                    box-shadow: 0 8px 16px rgba(0,0,0,0.2); text-align:center;'>
-    """,
-    unsafe_allow_html=True
-)
-st.image(logo, width=200)
-st.markdown("</div></div>", unsafe_allow_html=True)
-
-st.markdown("<h3 style='text-align:center; color:#003366;'>Profit Calculator</h3>", unsafe_allow_html=True)
+# ========================
+# اختيار نوع المشروع
+# ========================
+project_type = st.selectbox(t["brand_status"], [t["existing"], t["new"]])
 
 # ========================
 # إدخال البيانات
 # ========================
-st.markdown("### أدخل تفاصيل مشروعك لحساب الربح والخسارة:")
+st.markdown(t["enter_details"])
 
 col1, col2 = st.columns(2)
 
 with col1:
-    selling_price = st.number_input("سعر البيع للمنتج الواحد", min_value=0, value=0, step=10)
-    units_sold = st.number_input("عدد الوحدات المباعة", min_value=0, value=0, step=1)
-    manufacturing_cost = st.number_input("تكلفة التصنيع (للوحدة)", min_value=0, value=0, step=10)
-    packaging_cost = st.number_input("تكلفة التغليف (للوحدة)", min_value=0, value=0, step=10)
+    selling_price = st.number_input(t["selling_price"], min_value=0, value=0, step=10)
+    units_sold = st.number_input(t["units_sold"], min_value=0, value=0, step=1)
+    manufacturing_cost = st.number_input(t["manufacturing_cost"], min_value=0, value=0, step=10)
+    packaging_cost = st.number_input(t["packaging_cost"], min_value=0, value=0, step=10)
 
 with col2:
-    ads_sales = st.number_input("تكلفة الإعلانات (مبيعات)", min_value=0, value=0, step=100)
-    ads_awareness = st.number_input("تكلفة الإعلانات (وعي)", min_value=0, value=0, step=100)
-    photography_cost = st.number_input("تكلفة التصوير", min_value=0, value=0, step=100)
-    marketing_team = st.number_input("تكلفة فريق التسويق", min_value=0, value=0, step=100)
+    ads_sales = st.number_input(t["ads_sales"], min_value=0, value=0, step=100)
+    ads_awareness = st.number_input(t["ads_awareness"], min_value=0, value=0, step=100)
+    photography_cost = st.number_input(t["photography_cost"], min_value=0, value=0, step=100)
+    marketing_team = st.number_input(t["marketing_team"], min_value=0, value=0, step=100)
 
-# ========================
-# تكاليف إضافية اختيارية
-# ========================
-st.markdown("### تفاصيل إضافية (اختياري)")
 col3, col4 = st.columns(2)
 
 with col3:
-    shipping_cost = st.number_input(
-        "تكلفة الشحن (للوحدة، اختياري)", min_value=0, value=0, step=10
-    )
-    return_cost_per_unit = st.number_input(
-        "تكلفة المرتجعات لكل وحدة (اختياري)", min_value=0, value=0, step=10
-    )
+    shipping_cost = st.number_input(t["shipping_cost"], min_value=0, value=0, step=10)
+    return_cost_per_unit = st.number_input(t["return_cost_per_unit"], min_value=0, value=0, step=10)
 
 with col4:
-    delivery_rate = st.slider("نسبة التسليمات الناجحة (%)", min_value=0, max_value=100, value=100, step=1)
+    delivery_rate = st.slider(t["delivery_rate"], min_value=0, max_value=100, value=100, step=1)
     return_rate = 100 - delivery_rate
 
 # ========================
-# الحسابات
+# الحسابات + عرض النتائج + PDF
 # ========================
-if st.button("احسب النتيجة"):
+if st.button(t["compute"]):
     gross_revenue = selling_price * units_sold
     total_manufacturing = manufacturing_cost * units_sold
     total_packaging = packaging_cost * units_sold
-    total_shipping = shipping_cost * units_sold if shipping_cost > 0 else 0
+    total_shipping = shipping_cost * units_sold
     ads_total = ads_sales + ads_awareness
     total_fixed = ads_total + photography_cost + marketing_team
     units_returned = (return_rate / 100) * units_sold
-    returns_cost = units_returned * return_cost_per_unit if return_cost_per_unit > 0 else 0
+    returns_cost = units_returned * return_cost_per_unit
     total_costs = total_manufacturing + total_packaging + total_shipping + total_fixed + returns_cost
     net_profit = gross_revenue - total_costs
+    cac = total_costs / max(units_sold,1)
 
-    st.markdown("---")
-    st.subheader("نتائج الحساب:")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("إجمالي الإيرادات", f"{gross_revenue:,.0f} جنيه")
-        st.metric("إجمالي التكاليف", f"{total_costs:,.0f} جنيه")
-        st.metric("صافي الربح", f"{net_profit:,.0f} جنيه")
-
-    with col2:
-        st.metric("نسبة المرتجعات (%)", f"{return_rate:.1f}%")
-        st.metric("عدد الوحدات المرتجعة", f"{units_returned:,.0f} وحدة")
-        st.metric("تكلفة المرتجعات", f"{returns_cost:,.0f} جنيه")
-
-# ========================
-# قسم الاستشارة
-# ========================
-st.markdown("---")
-st.subheader("لو محتاج استشارة من المتخصص")
-st.markdown(
-    "<p style='color:#444; text-align:center;'>ابعتلي دلوقتي مشكلتك أو استفسارك، وأنا هكون معاك على واتساب علشان نلاقي الحل سوا</p>",
-    unsafe_allow_html=True
-)
-user_msg = st.text_area("✉️ اكتب رسالتك هنا:", placeholder="مثلاً: عندي مشروع بس مش عارف أبدأ تسويقه...", height=120)
-if st.button("ابعت رسالتك دلوقتي"):
-    if user_msg.strip():
-        whatsapp_url = f"https://wa.me/201001753411?text={user_msg.replace(' ', '%20')}"
-        st.info("تم تجهيز رسالتك. هتتبعت دلوقتي على واتساب 👇")
-        st.markdown(
-            f"<a href='{whatsapp_url}' target='_blank' "
-            "style='display:inline-block; background:#25D366; color:white; padding:10px 20px; "
-            "border-radius:8px; text-decoration:none; font-weight:bold;'>افتح واتساب وأرسل الرسالة</a>",
-            unsafe_allow_html=True
-        )
+    # Project evaluation
+    if net_profit < 0:
+        msg = "Warning: Net profit is negative! Review your plan."
+    elif project_type == t["existing"]:
+        msg = "Project looks profitable." if net_profit >=0 else "Project not profitable yet. Work on your plan."
     else:
-        st.warning("من فضلك اكتب رسالتك الأول قبل ما تبعتها.")
+        msg = "Project not profitable yet. Work on your plan." if net_profit <0 else "Project looks profitable."
+
+    # عرض النتائج
+    st.markdown("---")
+    st.subheader(t["results"])
+    st.markdown(f"{t['gross_revenue']}: {gross_revenue:,.2f}")
+    st.markdown(f"{t['total_costs']}: {total_costs:,.2f}")
+    st.markdown(f"{t['net_profit']}: {net_profit:,.2f}")
+    st.markdown(f"{t['units_returned']}: {units_returned:,.2f}")
+    st.markdown(f"{t['returns_cost']}: {returns_cost:,.2f}")
+    st.markdown(f"{t['cac']}: {cac:,.2f}")
+    st.markdown(f"{t['evaluation']}: {msg}")
+
+    # إنشاء PDF بالإنجليزية فقط
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font("Amiri", "", "fonts/Amiri-Regular.ttf", uni=True)
+    pdf.set_font("Amiri", size=14)
+    pdf.cell(0,10,f"Client Name: {client_name}", ln=True)
+    pdf.cell(0,10,f"Gross Revenue: {gross_revenue:,.2f}", ln=True)
+    pdf.cell(0,10,f"Total Costs: {total_costs:,.2f}", ln=True)
+    pdf.cell(0,10,f"Net Profit: {net_profit:,.2f}", ln=True)
+    pdf.cell(0,10,f"Units Returned: {units_returned:,.2f}", ln=True)
+    pdf.cell(0,10,f"Returns Cost: {returns_cost:,.2f}", ln=True)
+    pdf.cell(0,10,f"Customer Acquisition Cost: {cac:,.2f}", ln=True)
+    pdf.cell(0,10,f"Project Evaluation: {msg}", ln=True)
+    pdf.ln(10)
+    pdf.cell(0,10,"Developed by Mohamed.A Marketing", ln=True, align="C")
+    pdf_file = "profit_report.pdf"
+    pdf.output(pdf_file)
+    with open(pdf_file,"rb") as f:
+        st.download_button("📥 Download PDF Report", f, file_name=pdf_file)
 
 # ========================
-# توقيع مع خلفية دائرية 3D + نص Made By
-# ========================
-st.markdown(
-    """
-    <div style='display:flex; justify-content:center; margin-top:20px;'>
-        <div style='background-color:white; border-radius:30px; padding:15px; max-width:250px; 
-                    box-shadow: 0 8px 16px rgba(0,0,0,0.2); text-align:center;'>
-    """,
-    unsafe_allow_html=True
-)
-st.image(signature, width=180)
-st.markdown("<p style='text-align:center; color:#555; margin-top:10px; font-size:16px;'>Made By <b>Mohamed.A Marketing</b></p>", unsafe_allow_html=True)
-st.markdown("</div></div>", unsafe_allow_html=True)
-
-# ========================
-# الفوتر (أيقونات فيسبوك وواتساب مرة واحدة فقط)
+# استشارة تواصل
 # ========================
 st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
-        <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
-        </a>
-        <a href='https://wa.me/201001753411' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
-        </a>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.subheader(t["consult"])
+st.markdown(f"<p>{t['consult_desc']}</p>", unsafe_allow_html=True)
+user_msg = st.text_area("✉️", placeholder="Write your issue here..." if is_en else "اكتب رسالتك هنا:", height=120)
+if st.button(t["send_msg"]):
+    if user_msg.strip():
+        whatsapp_url = f"https://wa.me/201001753411?text={user_msg.replace(' ','%20')}"
+        st.info("Message ready to send via WhatsApp" if is_en else "تم تجهيز رسالتك")
+        st.markdown(f"<a href='{whatsapp_url}' target='_blank' style='display:inline-block; background:#25D366; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;'>Open WhatsApp</a>", unsafe_allow_html=True)
+    else:
+        st.warning("Please write a message first." if is_en else "من فضلك اكتب رسالتك أولاً")
+
+# ========================
+# Footer - social icons
+# ========================
+st.markdown("---")
+st.markdown("""
+<div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
+    <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
+        <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
+    </a>
+    <a href='https://wa.me/201001753411' target='_blank'>
+        <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
+    </a>
+</div>
+""", unsafe_allow_html=True)
