@@ -1,8 +1,6 @@
 import streamlit as st
 from PIL import Image
 from fpdf import FPDF
-import arabic_reshaper
-from bidi.algorithm import get_display
 import os
 
 # ========================
@@ -15,7 +13,7 @@ st.set_page_config(
 )
 
 # ========================
-# تحميل الصور
+# تحميل الصور (لوغو وتوقيع)
 # ========================
 try:
     logo = Image.open("logo.png")
@@ -23,20 +21,18 @@ try:
 except Exception as e:
     st.error(f"Error loading images: {e}")
 
-# عرض اللوغو أعلى الصفحة
+# ========================
+# عرض اللوجو في الواجهة
+# ========================
 st.image(logo, width=200)
 
 # ========================
 # اختيار اللغة
 # ========================
-lang = st.selectbox(
-    "Select Language / اختر اللغة",
-    ["English", "العربية"],
-    index=0  # English default
-)
+lang = st.selectbox("Select Language / اختر اللغة", ["English", "العربية"], index=0)
 
 # ========================
-# ترجمة النصوص حسب اللغة
+# النصوص حسب اللغة
 # ========================
 if lang == "English":
     texts = {
@@ -129,13 +125,11 @@ brand_status = st.radio(
 # ========================
 st.markdown(texts["enter_details"])
 col1, col2 = st.columns(2)
-
 with col1:
     selling_price = st.number_input(texts["selling_price"], min_value=0, value=0, step=10)
     units_sold = st.number_input(texts["units_sold"], min_value=0, value=0, step=1)
     manufacturing_cost = st.number_input(texts["manufacturing_cost"], min_value=0, value=0, step=10)
     packaging_cost = st.number_input(texts["packaging_cost"], min_value=0, value=0, step=10)
-
 with col2:
     ads_sales = st.number_input(texts["ads_sales"], min_value=0, value=0, step=100)
     ads_awareness = st.number_input(texts["ads_awareness"], min_value=0, value=0, step=100)
@@ -147,11 +141,9 @@ with col2:
 # ========================
 st.markdown(texts["additional_details"])
 col3, col4 = st.columns(2)
-
 with col3:
     shipping_cost = st.number_input(texts["shipping_cost"], min_value=0, value=0, step=10)
     return_cost_per_unit = st.number_input(texts["return_cost"], min_value=0, value=0, step=10)
-
 with col4:
     delivery_rate = st.slider(texts["delivery_rate"], min_value=0, max_value=100, value=100, step=1)
     return_rate = 100 - delivery_rate
@@ -173,18 +165,19 @@ if st.button(texts["calculate"]):
     delivered_units = (delivery_rate / 100) * units_sold
     cac = total_costs / delivered_units if delivered_units > 0 else 0
 
+    # ========================
+    # عرض النتائج
+    # ========================
     st.markdown("---")
     st.subheader(texts["results"])
-
     col1, col2 = st.columns(2)
     with col1:
         st.metric(texts["gross_revenue"], f"{gross_revenue:,.2f}")
         st.metric(texts["total_costs"], f"{total_costs:,.2f}")
         st.metric(texts["net_profit"], f"{net_profit:,.2f}")
         st.metric(texts["cac"], f"{cac:,.2f}")
-
     with col2:
-        st.metric(texts["return_rate"], f"{return_rate:.1f}%")
+        st.metric(texts["return_rate"], f"{return_rate:.2f}%")
         st.metric(texts["units_returned"], f"{units_returned:,.2f}")
         st.metric(texts["returns_cost"], f"{returns_cost:,.2f}")
 
@@ -197,19 +190,18 @@ if st.button(texts["calculate"]):
         st.error(texts["project_warning"])
 
     # ========================
-    # إنشاء تقرير PDF
+    # إنشاء تقرير PDF مع اللوجو والتوقيع
     # ========================
     pdf = FPDF()
     pdf.add_page()
-
-    # إضافة اللوغو في PDF
-    if os.path.exists("logo.png"):
-        pdf.image("logo.png", x=80, y=8, w=50)
-
-    # استخدام خط Unicode
+    # استخدم خط Unicode (تأكد انك مرفوع الخط في مجلد fonts)
     pdf.add_font("ArialUnicode", "", "fonts/Amiri-Regular.ttf", uni=True)
     pdf.set_font("ArialUnicode", size=14)
-    pdf.ln(35)  # مسافة بعد اللوغو
+
+    # إضافة اللوجو أعلى التقرير
+    pdf.image("logo.png", x=80, w=50)
+    pdf.ln(20)
+
     pdf.cell(0, 10, f"Client Name: {client_name}", ln=True)
     pdf.ln(5)
     pdf.cell(0, 10, f"Brand Status: {brand_status}", ln=True)
@@ -221,19 +213,19 @@ if st.button(texts["calculate"]):
     pdf.cell(0, 10, f"{texts['units_returned']}: {units_returned:,.2f}", ln=True)
     pdf.cell(0, 10, f"{texts['returns_cost']}: {returns_cost:,.2f}", ln=True)
     pdf.cell(0, 10, f"{texts['cac']}: {cac:,.2f}", ln=True)
+    pdf.ln(10)
 
-    # إضافة التوقيع في PDF
-    if os.path.exists("signature.png"):
-        pdf.image("signature.png", x=80, y=pdf.get_y() + 10, w=50)
-        pdf.ln(25)
+    # إضافة التوقيع أسفل التقرير
+    pdf.image("signature.png", x=80, w=50)
+    pdf.ln(10)
+    pdf.cell(0, 10, "Developed by Mohamed.A Marketing", ln=True, align="C")
 
     pdf.output("profit_report.pdf")
-
     with open("profit_report.pdf", "rb") as f:
         st.download_button("📥 Download PDF", f, file_name="profit_report.pdf")
 
 # ========================
-# قسم الاستشارة والتواصل
+# قسم الاستشارة
 # ========================
 st.markdown("---")
 st.subheader(texts["consult"])
@@ -260,10 +252,4 @@ st.markdown(
     f"""
     <div style='text-align:center; display:flex; justify-content:center; gap:10px; margin-bottom:20px;'>
         <a href='https://www.facebook.com/1mohamed.abdo.97' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png' width='30'/>
-        </a>
-        <a href='https://wa.me/201001753411' target='_blank'>
-            <img src='https://cdn-icons-png.flaticon.com/512/733/733585.png' width='30'/>
-        </a>
-    </div>
-    <p style='text-align:center; color:#555; font-size:14px;'>{texts["
+            <img src='https://cdn-icons-png.flaticon.com/512/733/733547.png
